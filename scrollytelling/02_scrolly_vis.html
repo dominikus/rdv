@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <title>Scrollytelling demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src='https://unpkg.com/scrollama'></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #333;
+      }
+
+      .text {
+        z-index: 999;
+      }
+
+      .block-1 {
+        background-color: #333;
+        color: white;
+      }
+
+      h1, h2 {
+        margin: 4em auto 2em auto;
+      }
+
+
+      .vis {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0px;
+      }
+
+      .vis .placeholder {
+        max-width: 100%;
+        width: 600px;
+        height: 600px;
+        background-color: darkslategray;
+        color: white;
+        text-align: center;
+      }
+
+    </style>
+    
+
+  </head>
+
+  <body>
+
+    <div class="block-1 container">
+      <div class="row">
+        <div class="text col-lg-6">
+          <h1>The Unlikely Odds of Touring The World</h1>
+          <div class="step"><p><b>You're here</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam convallis massa vel vehicula iaculis.</p></div>
+          <div class="step"><p><b>Sydney</b> Mauris vel neque eget erat mattis viverra. Nulla porttitor enim tellus. Proin at neque eget enim ornare finibus nec vel sem. Nullam maximus vehicula scelerisque. </p></div>
+          <div class="step"><p><b>San Francisco</b> Nam posuere ultrices semper. In erat nulla, tempus tempus arcu sit amet, porttitor facilisis nisi. Ut varius imperdiet sapien, id tempor nisi aliquam in. Pellentesque in lectus condimentum, efficitur felis et, pellentesque neque.</p></div>
+          <div class="step"><p><b>Tokyo</b> Curabitur id ultricies felis. Morbi laoreet euismod est id iaculis. Nulla in lorem in dolor ultricies posuere eget eu arcu. Pellentesque at ex sit amet quam maximus luctus. Quisque egestas magna vel aliquam vestibulum. Aenean elementum, enim ut porttitor fermentum, tortor lectus congue lorem, vitae facilisis purus ex nec elit. </p></div>
+          <div class="step"><p><b>Cape Town</b> Nunc vel rutrum nisl. Curabitur nunc turpis, semper sed commodo vel, viverra quis libero. Morbi vulputate elit sem, ut congue odio sodales et. </p></div>
+        </div>
+      </div>
+
+      <div class="vis">
+        <p class="placeholder">vis</p>
+      </div>
+    </div>
+    
+
+    <script>
+      // responsive resizing:
+      var resize = function(){
+        var height = window.innerHeight;
+        d3.selectAll('.step').style('min-height', height);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      var pseudoViz = d3.select('.placeholder');
+
+      var initScroller = function(){
+        var scroller = scrollama();
+
+        scroller
+          .setup({
+            step: '.step'
+          })
+          .onStepEnter(function(step){
+            var stepIndex = step.index;
+
+            pseudoViz.text('step ' + stepIndex);
+          });
+      };
+
+      // start:
+      initScroller();
+
+    </script>
+    
+  </body>
+</html>

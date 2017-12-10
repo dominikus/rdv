@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <title>Scrollytelling demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #333;
+      }
+
+
+      .vis {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0px;
+      }
+
+      .vis canvas {
+        max-width: 100%;
+      }
+
+    </style>
+    
+
+  </head>
+
+  <body>
+    <div class="vis">
+      <canvas width="960" height="600" />
+    </div>
+
+    
+
+    <script>
+      // d3 projections + canvas:
+      var context = d3.select("canvas").node().getContext("2d");
+      var projection = d3.geoOrthographic();
+      var path = d3.geoPath(projection, context);
+
+      var worldData = undefined;
+      var myLocation = undefined;
+
+      var drawGlobe = function(){
+        context.clearRect(0, 0, 960, 600);
+        context.beginPath();
+        context.strokeStyle = 'white';
+        path(topojson.mesh(worldData));
+        context.stroke();
+      }
+
+      var rotateTo = function(target){
+        var lng = target[0];
+        var lat = target[1];
+
+        (function transition() {
+          d3.transition()
+          .duration(1500)
+          .tween("rotate", function() {
+            var r = d3.geoInterpolate(projection.rotate(), [-lng, -lat]);
+            return function(t) {
+              projection.rotate(r(t));
+              drawGlobe();
+            }
+          })
+        })();
+      }
+
+      // geolocation:
+      var geolocate = function(){
+        if(!myLocation && 'geolocation' in navigator){
+          navigator.geolocation.getCurrentPosition(function(position){
+            var lng = position.coords.longitude;
+            var lat = position.coords.latitude;
+
+            console.log('longitude ' + lng + ', latitude ' + lat);
+
+            myLocation = [lng, lat]
+
+            rotateTo(myLocation);
+          }, function(error){
+            console.log('couldnt geolocate!');
+            console.log(error);
+          });
+        } else {
+          rotateTo(myLocation);
+        }
+      }
+
+
+
+      var loadData = function(){
+
+        d3.json("https://unpkg.com/world-atlas@1/world/110m.json", function(error, world) {
+          if (error) throw error;
+
+          worldData = world;
+          drawGlobe();
+
+          geolocate();
+        });
+      }
+
+      // start:
+      loadData();
+    </script>
+    
+  </body>
+</html>
